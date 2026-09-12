@@ -1,5 +1,6 @@
 # for data manipulation
 import pandas as pd
+import os
 # for building the preprocessing and modeling pipeline
 from sklearn.compose import make_column_transformer
 from sklearn.pipeline import make_pipeline
@@ -115,9 +116,13 @@ with mlflow.start_run():
         "test_f1-score": test_report['1']['f1-score']
     })
 
+    # Ensure the deployment directory exists
+    deployment_dir = "tourism_project/deployment"
+    os.makedirs(deployment_dir, exist_ok=True)
+
     # Save the model next to app.py so the Streamlit app can load it directly,
     # and log it as an MLflow artifact for traceability
-    model_path = "tourism_project/deployment/best_tourism_package_model.joblib"   # Specify the local file path (inside tourism_project/deployment/) where the trained model should be saved.
+    model_path = os.path.join(deployment_dir, "best_tourism_package_model.joblib")   # Specify the local file path (inside tourism_project/deployment/) where the trained model should be saved.
     joblib.dump(best_model, model_path)  # complete the code to save the model
     mlflow.log_artifact(model_path, artifact_path="model")
     print(f"Model saved to {model_path}")
